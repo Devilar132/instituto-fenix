@@ -22,11 +22,11 @@ const donationSchema = z.object({
   message: z.string().optional(),
 })
 
+const presetAmounts = [50, 100, 250, 500, 1000]
+
 export function DonationForm() {
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
-
-  const presetAmounts = [50, 100, 250, 500, 1000]
 
   const {
     register,

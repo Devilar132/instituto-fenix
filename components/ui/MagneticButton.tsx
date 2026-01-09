@@ -1,12 +1,13 @@
 'use client'
 
-import { useRef, useState, MouseEvent, forwardRef } from 'react'
+import { useRef, useState, MouseEvent, ReactNode } from 'react'
 import { motion, useMotionValue, useSpring } from 'framer-motion'
 import { Button, ButtonProps } from './Button'
 
 interface MagneticButtonProps extends ButtonProps {
   magnetic?: boolean
   strength?: number
+  children?: ReactNode
 }
 
 export function MagneticButton({ 

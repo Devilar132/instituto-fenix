@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { QrCode, Copy, CheckCircle, Download, Clock, Sparkles, RefreshCw } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
@@ -40,12 +40,7 @@ export function PixPaymentMercadoPago({
   const [error, setError] = useState<string | null>(null)
   const [isChecking, setIsChecking] = useState(false)
 
-  // Criar pagamento PIX ao montar o componente
-  useEffect(() => {
-    createPixPayment()
-  }, [])
-
-  const createPixPayment = async () => {
+  const createPixPayment = useCallback(async () => {
     setIsLoading(true)
     setError(null)
 
@@ -86,10 +81,15 @@ export function PixPaymentMercadoPago({
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [amount, donorName, donorEmail, donorPhone, description, projectId, anonymous])
+
+  // Criar pagamento PIX ao montar o componente
+  useEffect(() => {
+    createPixPayment()
+  }, [createPixPayment])
 
   // Verificar status do pagamento
-  const checkPaymentStatus = async () => {
+  const checkPaymentStatus = useCallback(async () => {
     if (!pixData?.paymentId) return
 
     setIsChecking(true)
@@ -108,7 +108,7 @@ export function PixPaymentMercadoPago({
     } finally {
       setIsChecking(false)
     }
-  }
+  }, [pixData?.paymentId, onSuccess])
 
   useEffect(() => {
     if (timeLeft > 0 && !isPaid && pixData) {
@@ -121,7 +121,7 @@ export function PixPaymentMercadoPago({
       }, 1000)
       return () => clearInterval(timer)
     }
-  }, [timeLeft, isPaid, pixData])
+  }, [timeLeft, isPaid, pixData, checkPaymentStatus])
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
@@ -245,6 +245,7 @@ export function PixPaymentMercadoPago({
           <div className="flex justify-center mb-4">
             <div className="bg-white p-3 sm:p-4 rounded-lg border-2 border-gray-300">
               {pixData.qrCodeBase64 ? (
+                // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={`data:image/png;base64,${pixData.qrCodeBase64}`}
                   alt="QR Code PIX"

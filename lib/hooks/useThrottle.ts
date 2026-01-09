@@ -6,14 +6,16 @@ export function useThrottle<T extends (...args: any[]) => any>(
 ): T {
   const lastRun = useRef<number>(Date.now())
 
-  return useCallback(
-    ((...args: Parameters<T>) => {
+  const throttledFunc = useCallback(
+    (...args: Parameters<T>) => {
       if (Date.now() - lastRun.current >= delay) {
         func(...args)
         lastRun.current = Date.now()
       }
-    }) as T,
+    },
     [func, delay]
-  )
+  ) as T
+
+  return throttledFunc
 }
 
