@@ -62,7 +62,7 @@ export function TeamMembersGrid({ members }: TeamMembersGridProps) {
                   transition={{ duration: 0.3 }}
                   className="h-full"
                 >
-                  <Card3D hover className="h-full flex flex-col group relative overflow-hidden cursor-pointer" onClick={() => setSelectedMember(member)}>
+                  <Card3D className="h-full flex flex-col group relative overflow-hidden cursor-pointer" onClick={() => setSelectedMember(member)}>
                     {/* Gradient Overlay on Hover */}
                     <div className="absolute inset-0 bg-gradient-to-br from-primary-500/0 to-secondary-500/0 group-hover:from-primary-500/10 group-hover:to-secondary-500/10 transition-all duration-500 z-10 pointer-events-none" />
                     

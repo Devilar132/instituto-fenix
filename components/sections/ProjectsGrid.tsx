@@ -29,7 +29,7 @@ const statusLabels = {
 function ProjectCard({ project, index }: { project: Project; index: number }) {
   return (
     <ScrollReveal delay={index * 0.1} direction="up" className="h-full">
-      <Card3D hover className="h-full flex flex-col">
+      <Card3D className="h-full flex flex-col">
         <div className="relative h-48 w-full overflow-hidden">
           <Image
             src={project.image}
