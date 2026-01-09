@@ -18,9 +18,7 @@ export function Gallery({ items, title, description }: GalleryProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
   const [filter, setFilter] = useState<string>('all')
 
-  const categories = Array.from(
-    new Set(items.map((item) => item.category).filter((cat): cat is string => Boolean(cat)))
-  )
+  const categories = Array.from(new Set(items.map((item) => item.category).filter(Boolean)))
 
   const filteredItems =
     filter === 'all'
