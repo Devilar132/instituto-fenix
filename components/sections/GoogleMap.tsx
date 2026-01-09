@@ -104,7 +104,16 @@ export function GoogleMap({
 // Declaração de tipos para TypeScript
 declare global {
   interface Window {
-    google: typeof google
+    google?: {
+      maps: {
+        Map: new (element: HTMLElement, options?: any) => any
+        Marker: new (options?: any) => any
+        InfoWindow: new (options?: any) => any
+        SymbolPath: {
+          CIRCLE: number
+        }
+      }
+    }
   }
 }
 
