@@ -74,6 +74,36 @@ O projeto utiliza um design system consistente com:
 - `npm run lint` - Executa linter
 - `npm run type-check` - Verifica tipos TypeScript
 
+## 🔐 Variáveis de Ambiente
+
+Crie um arquivo `.env.local` na raiz do projeto (veja `.env.example` para referência):
+
+```env
+MERCADOPAGO_ACCESS_TOKEN=seu_access_token_aqui
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+```
+
+**⚠️ IMPORTANTE**: Nunca commite arquivos `.env.local` no Git.
+
+## 🚀 Deploy
+
+### Deploy no Netlify
+
+O projeto está configurado para deploy automático no Netlify. Veja o guia completo em [`DEPLOY_NETLIFY.md`](./DEPLOY_NETLIFY.md).
+
+**Passos rápidos:**
+1. Faça push do código para o GitHub
+2. Acesse [Netlify](https://www.netlify.com) e conecte seu repositório
+3. Configure as variáveis de ambiente no painel do Netlify
+4. Deploy automático a cada push para `main`!
+
+### Variáveis de Ambiente no Netlify
+
+Configure estas variáveis no painel do Netlify (Settings → Environment variables):
+
+- `MERCADOPAGO_ACCESS_TOKEN` - Access Token do Mercado Pago (produção)
+- `NEXT_PUBLIC_SITE_URL` - URL do site (será atualizado automaticamente após primeiro deploy)
+
 ## 📄 Licença
 
 Este projeto é propriedade do Instituto Fenix.
