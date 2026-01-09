@@ -4,7 +4,7 @@ import { useRef, useState } from 'react'
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { Card, CardProps } from './Card'
 
-interface Card3DProps extends CardProps {
+export interface Card3DProps extends CardProps {
   children: React.ReactNode
 }
 
