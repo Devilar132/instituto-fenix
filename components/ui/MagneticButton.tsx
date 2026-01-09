@@ -1,22 +1,21 @@
 'use client'
 
-import { useRef, useState, MouseEvent, ReactNode } from 'react'
+import { useRef, useState, MouseEvent } from 'react'
 import { motion, useMotionValue, useSpring } from 'framer-motion'
 import { Button, ButtonProps } from './Button'
 
-interface MagneticButtonProps extends ButtonProps {
+export interface MagneticButtonProps extends Omit<ButtonProps, 'ref'> {
   magnetic?: boolean
   strength?: number
-  children?: ReactNode
 }
 
 export function MagneticButton({ 
   magnetic = true, 
   strength = 0.3,
   children,
-  ...props 
+  ...buttonProps 
 }: MagneticButtonProps) {
-  const ref = useRef<HTMLButtonElement>(null)
+  const ref = useRef<HTMLDivElement>(null)
   const [isHovered, setIsHovered] = useState(false)
 
   const x = useMotionValue(0)
@@ -26,7 +25,7 @@ export function MagneticButton({
   const xSpring = useSpring(x, springConfig)
   const ySpring = useSpring(y, springConfig)
 
-  const handleMouseMove = (e: MouseEvent<HTMLButtonElement>) => {
+  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
     if (!ref.current || !magnetic) return
 
     const rect = ref.current.getBoundingClientRect()
@@ -48,15 +47,17 @@ export function MagneticButton({
 
   return (
     <motion.div
+      ref={ref}
       style={{
         x: xSpring,
         y: ySpring,
+        display: 'inline-block',
       }}
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={handleMouseLeave}
     >
-      <Button {...props}>
+      <Button {...buttonProps}>
         {children}
       </Button>
     </motion.div>
