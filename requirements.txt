@@ -1,0 +1,38 @@
+# Bibliotecas Core para Análise de Dados
+pandas>=2.2.0
+numpy>=1.26.0
+
+# Visualização de Dados
+matplotlib>=3.8.0
+seaborn>=0.13.0
+plotly>=5.18.0
+
+# Jupyter e Notebooks
+jupyter>=1.0.0
+jupyterlab>=4.1.0
+ipykernel>=6.29.0
+notebook>=7.0.0
+
+# Web Scraping e Requisições HTTP
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+lxml>=5.1.0
+selenium>=4.15.0
+
+# Análise e Estatística
+scipy>=1.12.0
+scikit-learn>=1.4.0
+statsmodels>=0.14.0
+
+# Utilitários
+python-dotenv>=1.0.0
+openpyxl>=3.1.0  # Para ler/escrever Excel
+xlrd>=2.0.1  # Para ler arquivos Excel antigos
+
+# Formatação e Exportação
+openpyxl>=3.1.0
+xlsxwriter>=3.1.0
+
+# Extras úteis
+tqdm>=4.66.0  # Barras de progresso
+python-dateutil>=2.8.2

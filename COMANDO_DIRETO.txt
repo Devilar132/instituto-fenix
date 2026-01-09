@@ -1,0 +1,8 @@
+Execute este comando no PowerShell como Administrador:
+
+[Environment]::SetEnvironmentVariable("Path", [Environment]::GetEnvironmentVariable("Path", "Machine") + ";C:\Program Files\nodejs\", "Machine")
+
+Depois:
+1. Feche TODOS os terminais
+2. Abra um novo terminal
+3. Teste: npm -v
