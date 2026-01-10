@@ -23,26 +23,24 @@ export function Header() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // handleClickOutside apenas para desktop
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
-      if (sobreRef.current && !sobreRef.current.contains(event.target as Node)) {
-        // Só fechar se não estiver clicando em um link
+    if (typeof window === 'undefined') return
+    
+    const handleClickOutside = (event: MouseEvent) => {
+      // Apenas para desktop (lg e acima)
+      if (window.innerWidth >= 1024 && sobreRef.current && !sobreRef.current.contains(event.target as Node)) {
         const target = event.target as HTMLElement
         if (!target.closest('a')) {
           setIsSobreOpen(false)
         }
       }
     }
+    
     if (isSobreOpen) {
-      // Usar um pequeno delay para evitar conflitos com cliques
-      const timer = setTimeout(() => {
-        document.addEventListener('mousedown', handleClickOutside, { passive: true })
-        document.addEventListener('touchstart', handleClickOutside, { passive: true })
-      }, 100)
+      document.addEventListener('mousedown', handleClickOutside)
       return () => {
-        clearTimeout(timer)
         document.removeEventListener('mousedown', handleClickOutside)
-        document.removeEventListener('touchstart', handleClickOutside)
       }
     }
   }, [isSobreOpen])
@@ -160,52 +158,45 @@ export function Header() {
 
         {/* Mobile Navigation */}
         {isOpen && (
-          <div className="lg:hidden pb-4 space-y-2 animate-slide-down relative z-50">
+          <div className="lg:hidden pb-4 space-y-2 animate-slide-down" style={{ pointerEvents: 'auto' }}>
             {navigation.map((item) => {
               if (item.href === '/sobre') {
                 return (
-                  <div key={item.href} className="relative">
+                  <div key={item.href} className="relative" style={{ pointerEvents: 'auto' }}>
                     <button
                       type="button"
-                      onClick={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        setIsSobreOpen(!isSobreOpen)
-                      }}
-                      onTouchEnd={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        setIsSobreOpen(!isSobreOpen)
-                      }}
+                      onClick={() => setIsSobreOpen(!isSobreOpen)}
                       className={cn(
                         'w-full flex items-center justify-between px-4 py-3 rounded-lg text-base font-medium transition-colors touch-manipulation',
                         isSobreActive
                           ? 'bg-primary-50 text-primary-600'
                           : 'text-dark-400 active:bg-primary-50'
                       )}
+                      style={{ pointerEvents: 'auto' }}
                     >
                       <span>{item.name}</span>
                       <ChevronDown 
                         className={cn(
-                          'h-5 w-5 transition-transform duration-200',
+                          'h-5 w-5 transition-transform duration-200 pointer-events-none',
                           isSobreOpen && 'rotate-180'
                         )} 
                       />
                     </button>
                     {isSobreOpen && (
-                      <div className="pl-4 mt-2 space-y-1 border-l-2 border-primary-200 relative z-50">
+                      <div className="pl-4 mt-2 space-y-1 border-l-2 border-primary-200" style={{ pointerEvents: 'auto' }}>
                         <Link
                           href="/sobre"
-                          onClick={(e) => {
+                          onClick={() => {
                             setIsOpen(false)
                             setIsSobreOpen(false)
                           }}
                           className={cn(
-                            'block px-4 py-3 rounded-lg text-sm transition-colors touch-manipulation min-h-[44px] flex items-center',
+                            'block px-4 py-3 rounded-lg text-sm transition-colors touch-manipulation min-h-[44px] flex items-center relative z-[60]',
                             pathname === '/sobre'
                               ? 'bg-primary-100 text-primary-600 font-medium'
                               : 'text-gray-600 active:bg-gray-50'
                           )}
+                          style={{ pointerEvents: 'auto', WebkitTapHighlightColor: 'rgba(255, 107, 53, 0.2)' }}
                         >
                           Sobre Nós
                         </Link>
@@ -218,11 +209,12 @@ export function Header() {
                               setIsSobreOpen(false)
                             }}
                             className={cn(
-                              'block px-4 py-3 rounded-lg text-sm transition-colors touch-manipulation min-h-[44px] flex items-center',
+                              'block px-4 py-3 rounded-lg text-sm transition-colors touch-manipulation min-h-[44px] flex items-center relative z-[60]',
                               pathname === link.href
                                 ? 'bg-primary-100 text-primary-600 font-medium'
                                 : 'text-gray-600 active:bg-gray-50'
                             )}
+                            style={{ pointerEvents: 'auto', WebkitTapHighlightColor: 'rgba(255, 107, 53, 0.2)' }}
                           >
                             {link.name}
                           </Link>
@@ -236,19 +228,14 @@ export function Header() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setIsOpen(false)
-                  }}
-                  onTouchStart={(e) => {
-                    e.stopPropagation()
-                  }}
+                  onClick={() => setIsOpen(false)}
                   className={cn(
                     'block px-4 py-3 rounded-lg text-base font-medium transition-colors touch-manipulation',
                     pathname === item.href
                       ? 'bg-primary-50 text-primary-600'
                       : 'text-dark-400 active:bg-primary-50'
                   )}
+                  style={{ pointerEvents: 'auto' }}
                 >
                   {item.name}
                 </Link>
@@ -256,14 +243,9 @@ export function Header() {
             })}
             <Link
               href="/como-ajudar"
-              onClick={(e) => {
-                e.stopPropagation()
-                setIsOpen(false)
-              }}
-              onTouchStart={(e) => {
-                e.stopPropagation()
-              }}
+              onClick={() => setIsOpen(false)}
               className="block px-4 py-3 bg-primary-600 text-white rounded-lg text-center font-medium mt-2 touch-manipulation active:bg-primary-700"
+              style={{ pointerEvents: 'auto' }}
             >
               Doar
             </Link>
