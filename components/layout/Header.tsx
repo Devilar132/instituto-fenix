@@ -158,13 +158,16 @@ export function Header() {
                 return (
                   <div key={item.href} className="relative">
                     <button
+                      type="button"
                       onClick={(e) => {
                         e.preventDefault()
                         e.stopPropagation()
                         setIsSobreOpen(!isSobreOpen)
                       }}
-                      onTouchStart={(e) => {
+                      onTouchEnd={(e) => {
+                        e.preventDefault()
                         e.stopPropagation()
+                        setIsSobreOpen(!isSobreOpen)
                       }}
                       className={cn(
                         'w-full flex items-center justify-between px-4 py-3 rounded-lg text-base font-medium transition-colors touch-manipulation',
@@ -190,11 +193,12 @@ export function Header() {
                             setIsOpen(false)
                             setIsSobreOpen(false)
                           }}
-                          onTouchStart={(e) => {
+                          onTouchEnd={(e) => {
                             e.stopPropagation()
+                            // Permitir navegação normal no touch
                           }}
                           className={cn(
-                            'block px-4 py-3 rounded-lg text-sm transition-colors touch-manipulation',
+                            'block px-4 py-3 rounded-lg text-sm transition-colors touch-manipulation min-h-[44px] flex items-center',
                             pathname === '/sobre'
                               ? 'bg-primary-100 text-primary-600 font-medium'
                               : 'text-gray-600 active:bg-gray-50'
@@ -211,11 +215,12 @@ export function Header() {
                               setIsOpen(false)
                               setIsSobreOpen(false)
                             }}
-                            onTouchStart={(e) => {
+                            onTouchEnd={(e) => {
                               e.stopPropagation()
+                              // Permitir navegação normal no touch
                             }}
                             className={cn(
-                              'block px-4 py-3 rounded-lg text-sm transition-colors touch-manipulation',
+                              'block px-4 py-3 rounded-lg text-sm transition-colors touch-manipulation min-h-[44px] flex items-center',
                               pathname === link.href
                                 ? 'bg-primary-100 text-primary-600 font-medium'
                                 : 'text-gray-600 active:bg-gray-50'
