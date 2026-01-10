@@ -78,8 +78,8 @@ export function TeamMembersGrid({ members }: TeamMembersGridProps) {
                     {/* Gradient Overlay on Hover */}
                     <div className="absolute inset-0 bg-gradient-to-br from-primary-500/0 to-secondary-500/0 group-hover:from-primary-500/10 group-hover:to-secondary-500/10 transition-all duration-500 z-10 pointer-events-none" />
                     
-                    {/* Image Container */}
-                    <div className="relative h-64 sm:h-72 overflow-hidden cursor-pointer" onClick={() => setSelectedMember(member)}>
+                    {/* Image Container - Aumentado */}
+                    <div className="relative h-80 sm:h-96 md:h-[400px] overflow-hidden cursor-pointer" onClick={() => setSelectedMember(member)}>
                       <div className="absolute inset-0 bg-gradient-to-t from-dark-500/50 via-transparent to-transparent z-10" />
                       <Image
                         src={member.image || '/placeholder-avatar.jpg'}
@@ -104,20 +104,13 @@ export function TeamMembersGrid({ members }: TeamMembersGridProps) {
 
                     {/* Content */}
                     <div className="p-4 sm:p-6 flex-1 flex flex-col">
-                      <div className="mb-4">
-                        <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1 group-hover:text-primary-600 transition-colors">
-                          {member.name}
-                        </h3>
-                        <div className="flex items-center text-primary-600 text-sm font-medium mb-3">
-                          <Users className="h-4 w-4 mr-1" />
-                          {member.role}
-                        </div>
-                        {member.bio && (
+                      {member.bio && (
+                        <div className="mb-4">
                           <p className="text-sm sm:text-base text-gray-600 line-clamp-3 leading-relaxed">
                             {member.bio}
                           </p>
-                        )}
-                      </div>
+                        </div>
+                      )}
 
                       {/* Social Links */}
                       {member.social && (
@@ -203,13 +196,13 @@ export function TeamMembersGrid({ members }: TeamMembersGridProps) {
                   </div>
                   
                   {/* Conteúdo do Modal */}
-                  <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 lg:p-12">
-                    <div className="mb-4 sm:mb-6">
+                  <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 lg:p-12 overflow-x-hidden">
+                    <div className="mb-4 sm:mb-6 w-full">
                       <div className="flex items-center mb-2 sm:mb-3">
                         <Award className="h-4 w-4 sm:h-5 sm:w-5 text-primary-600 mr-2 flex-shrink-0" />
-                        <span className="text-xs sm:text-sm font-medium text-primary-600">{selectedMember.role}</span>
+                        <span className="text-xs sm:text-sm font-medium text-primary-600 break-words">{selectedMember.role}</span>
                       </div>
-                      <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4 pr-10 sm:pr-0">
+                      <h2 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 sm:mb-4 pr-10 sm:pr-0 break-words leading-tight word-break-break-word">
                         {selectedMember.name}
                       </h2>
                       {selectedMember.bio && (

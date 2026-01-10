@@ -50,17 +50,17 @@ export function Stats() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-12"
+          className="text-center mb-8 sm:mb-10 md:mb-12"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4">
             Nossos Números
           </h2>
-          <p className="text-xl text-gray-100 max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl text-gray-100 max-w-2xl mx-auto px-4">
             Resultados que mostram o impacto do nosso trabalho na comunidade
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
           {stats.map((stat, index) => {
             const Icon = stat.icon
             return (
@@ -69,18 +69,18 @@ export function Stats() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.08 }}
+                transition={{ delay: index * 0.06 }}
                 className="text-center"
               >
-                <div className="flex justify-center mb-4 sm:mb-5">
-                  <div className="p-3 sm:p-4 md:p-5 bg-white/20 rounded-full backdrop-blur-sm border-2 border-white/30 glow-primary transition-transform hover:scale-110 duration-300">
-                    <Icon className={`h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 lg:h-9 lg:w-9 ${stat.color}`} />
+                <div className="flex justify-center mb-2 sm:mb-3 md:mb-4">
+                  <div className="p-2.5 sm:p-3 md:p-4 bg-white/20 rounded-full backdrop-blur-sm border-2 border-white/30 glow-primary transition-transform hover:scale-110 duration-300">
+                    <Icon className={`h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7 lg:h-8 lg:w-8 ${stat.color}`} />
                   </div>
                 </div>
-                <div className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-2 sm:mb-3 text-white">
+                <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-1.5 sm:mb-2 text-white leading-tight">
                   {stat.value}
                 </div>
-                <div className="text-white/90 text-sm sm:text-base md:text-lg font-medium px-3 sm:px-4 leading-relaxed">
+                <div className="text-white/90 text-xs sm:text-sm md:text-base font-medium px-2 sm:px-3 leading-snug sm:leading-normal">
                   {stat.label}
                 </div>
               </motion.div>

@@ -173,13 +173,6 @@ export function PartnersCarousel({
                       <ExternalLink className="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 text-white" />
                     </div>
                   </div>
-
-                  {/* Nome abaixo do logo (mobile) */}
-                  <div className="mt-3 sm:mt-4 text-center sm:hidden">
-                    <div className="text-sm font-semibold text-gray-700 line-clamp-2">
-                      {partner.name}
-                    </div>
-                  </div>
                 </a>
               </motion.div>
             ))}
