@@ -183,41 +183,45 @@ export function Header() {
                       />
                     </button>
                     {isSobreOpen && (
-                      <div className="pl-4 mt-2 space-y-1 border-l-2 border-primary-200" style={{ pointerEvents: 'auto' }}>
-                        <Link
+                      <div className="pl-4 mt-2 space-y-1 border-l-2 border-primary-200" style={{ pointerEvents: 'auto', zIndex: 60 }}>
+                        <a
                           href="/sobre"
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.preventDefault()
                             setIsOpen(false)
                             setIsSobreOpen(false)
+                            window.location.href = '/sobre'
                           }}
                           className={cn(
-                            'block px-4 py-3 rounded-lg text-sm transition-colors touch-manipulation min-h-[44px] flex items-center relative z-[60]',
+                            'block px-4 py-3 rounded-lg text-sm transition-colors touch-manipulation min-h-[44px] flex items-center relative cursor-pointer',
                             pathname === '/sobre'
                               ? 'bg-primary-100 text-primary-600 font-medium'
                               : 'text-gray-600 active:bg-gray-50'
                           )}
-                          style={{ pointerEvents: 'auto', WebkitTapHighlightColor: 'rgba(255, 107, 53, 0.2)' }}
+                          style={{ pointerEvents: 'auto', WebkitTapHighlightColor: 'rgba(255, 107, 53, 0.2)', zIndex: 70 }}
                         >
                           Sobre Nós
-                        </Link>
+                        </a>
                         {institutionalLinks.map((link) => (
-                          <Link
+                          <a
                             key={link.href}
                             href={link.href}
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.preventDefault()
                               setIsOpen(false)
                               setIsSobreOpen(false)
+                              window.location.href = link.href
                             }}
                             className={cn(
-                              'block px-4 py-3 rounded-lg text-sm transition-colors touch-manipulation min-h-[44px] flex items-center relative z-[60]',
+                              'block px-4 py-3 rounded-lg text-sm transition-colors touch-manipulation min-h-[44px] flex items-center relative cursor-pointer',
                               pathname === link.href
                                 ? 'bg-primary-100 text-primary-600 font-medium'
                                 : 'text-gray-600 active:bg-gray-50'
                             )}
-                            style={{ pointerEvents: 'auto', WebkitTapHighlightColor: 'rgba(255, 107, 53, 0.2)' }}
+                            style={{ pointerEvents: 'auto', WebkitTapHighlightColor: 'rgba(255, 107, 53, 0.2)', zIndex: 70 }}
                           >
                             {link.name}
-                          </Link>
+                          </a>
                         ))}
                       </div>
                     )}
