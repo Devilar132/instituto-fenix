@@ -24,15 +24,19 @@ export function Header() {
   }, [])
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       if (sobreRef.current && !sobreRef.current.contains(event.target as Node)) {
         setIsSobreOpen(false)
       }
     }
     if (isSobreOpen) {
       document.addEventListener('mousedown', handleClickOutside)
+      document.addEventListener('touchstart', handleClickOutside)
     }
-    return () => document.removeEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('touchstart', handleClickOutside)
+    }
   }, [isSobreOpen])
 
   const isSobreActive = pathname === '/sobre' || institutionalLinks.some(link => pathname === link.href)
@@ -148,18 +152,25 @@ export function Header() {
 
         {/* Mobile Navigation */}
         {isOpen && (
-          <div className="lg:hidden pb-4 space-y-2 animate-slide-down">
+          <div className="lg:hidden pb-4 space-y-2 animate-slide-down relative z-50">
             {navigation.map((item) => {
               if (item.href === '/sobre') {
                 return (
-                  <div key={item.href}>
+                  <div key={item.href} className="relative">
                     <button
-                      onClick={() => setIsSobreOpen(!isSobreOpen)}
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        setIsSobreOpen(!isSobreOpen)
+                      }}
+                      onTouchStart={(e) => {
+                        e.stopPropagation()
+                      }}
                       className={cn(
-                        'w-full flex items-center justify-between px-4 py-3 rounded-lg text-base font-medium transition-colors',
+                        'w-full flex items-center justify-between px-4 py-3 rounded-lg text-base font-medium transition-colors touch-manipulation',
                         isSobreActive
                           ? 'bg-primary-50 text-primary-600'
-                          : 'text-dark-400 hover:bg-primary-50'
+                          : 'text-dark-400 active:bg-primary-50'
                       )}
                     >
                       <span>{item.name}</span>
@@ -171,18 +182,22 @@ export function Header() {
                       />
                     </button>
                     {isSobreOpen && (
-                      <div className="pl-4 mt-2 space-y-1 border-l-2 border-primary-200">
+                      <div className="pl-4 mt-2 space-y-1 border-l-2 border-primary-200 relative z-50">
                         <Link
                           href="/sobre"
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.stopPropagation()
                             setIsOpen(false)
                             setIsSobreOpen(false)
                           }}
+                          onTouchStart={(e) => {
+                            e.stopPropagation()
+                          }}
                           className={cn(
-                            'block px-4 py-2 rounded-lg text-sm transition-colors',
+                            'block px-4 py-3 rounded-lg text-sm transition-colors touch-manipulation',
                             pathname === '/sobre'
                               ? 'bg-primary-100 text-primary-600 font-medium'
-                              : 'text-gray-600 hover:bg-gray-50'
+                              : 'text-gray-600 active:bg-gray-50'
                           )}
                         >
                           Sobre Nós
@@ -191,15 +206,19 @@ export function Header() {
                           <Link
                             key={link.href}
                             href={link.href}
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.stopPropagation()
                               setIsOpen(false)
                               setIsSobreOpen(false)
                             }}
+                            onTouchStart={(e) => {
+                              e.stopPropagation()
+                            }}
                             className={cn(
-                              'block px-4 py-2 rounded-lg text-sm transition-colors',
+                              'block px-4 py-3 rounded-lg text-sm transition-colors touch-manipulation',
                               pathname === link.href
                                 ? 'bg-primary-100 text-primary-600 font-medium'
-                                : 'text-gray-600 hover:bg-gray-50'
+                                : 'text-gray-600 active:bg-gray-50'
                             )}
                           >
                             {link.name}
@@ -214,12 +233,18 @@ export function Header() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  onClick={() => setIsOpen(false)}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setIsOpen(false)
+                  }}
+                  onTouchStart={(e) => {
+                    e.stopPropagation()
+                  }}
                   className={cn(
-                    'block px-4 py-3 rounded-lg text-base font-medium transition-colors',
+                    'block px-4 py-3 rounded-lg text-base font-medium transition-colors touch-manipulation',
                     pathname === item.href
                       ? 'bg-primary-50 text-primary-600'
-                      : 'text-dark-400 hover:bg-primary-50'
+                      : 'text-dark-400 active:bg-primary-50'
                   )}
                 >
                   {item.name}
@@ -228,8 +253,14 @@ export function Header() {
             })}
             <Link
               href="/como-ajudar"
-              onClick={() => setIsOpen(false)}
-              className="block px-4 py-3 bg-primary-600 text-white rounded-lg text-center font-medium mt-2"
+              onClick={(e) => {
+                e.stopPropagation()
+                setIsOpen(false)
+              }}
+              onTouchStart={(e) => {
+                e.stopPropagation()
+              }}
+              className="block px-4 py-3 bg-primary-600 text-white rounded-lg text-center font-medium mt-2 touch-manipulation active:bg-primary-700"
             >
               Doar
             </Link>
