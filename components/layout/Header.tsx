@@ -26,16 +26,24 @@ export function Header() {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       if (sobreRef.current && !sobreRef.current.contains(event.target as Node)) {
-        setIsSobreOpen(false)
+        // Só fechar se não estiver clicando em um link
+        const target = event.target as HTMLElement
+        if (!target.closest('a')) {
+          setIsSobreOpen(false)
+        }
       }
     }
     if (isSobreOpen) {
-      document.addEventListener('mousedown', handleClickOutside)
-      document.addEventListener('touchstart', handleClickOutside)
-    }
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-      document.removeEventListener('touchstart', handleClickOutside)
+      // Usar um pequeno delay para evitar conflitos com cliques
+      const timer = setTimeout(() => {
+        document.addEventListener('mousedown', handleClickOutside, { passive: true })
+        document.addEventListener('touchstart', handleClickOutside, { passive: true })
+      }, 100)
+      return () => {
+        clearTimeout(timer)
+        document.removeEventListener('mousedown', handleClickOutside)
+        document.removeEventListener('touchstart', handleClickOutside)
+      }
     }
   }, [isSobreOpen])
 
@@ -189,13 +197,8 @@ export function Header() {
                         <Link
                           href="/sobre"
                           onClick={(e) => {
-                            e.stopPropagation()
                             setIsOpen(false)
                             setIsSobreOpen(false)
-                          }}
-                          onTouchEnd={(e) => {
-                            e.stopPropagation()
-                            // Permitir navegação normal no touch
                           }}
                           className={cn(
                             'block px-4 py-3 rounded-lg text-sm transition-colors touch-manipulation min-h-[44px] flex items-center',
@@ -210,14 +213,9 @@ export function Header() {
                           <Link
                             key={link.href}
                             href={link.href}
-                            onClick={(e) => {
-                              e.stopPropagation()
+                            onClick={() => {
                               setIsOpen(false)
                               setIsSobreOpen(false)
-                            }}
-                            onTouchEnd={(e) => {
-                              e.stopPropagation()
-                              // Permitir navegação normal no touch
                             }}
                             className={cn(
                               'block px-4 py-3 rounded-lg text-sm transition-colors touch-manipulation min-h-[44px] flex items-center',
