@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { Menu, X, ChevronDown } from 'lucide-react'
 import { navigation, siteConfig, institutionalLinks } from '@/lib/constants'
 import { cn } from '@/lib/utils'
@@ -13,6 +13,7 @@ export function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isSobreOpen, setIsSobreOpen] = useState(false)
   const pathname = usePathname()
+  const router = useRouter()
   const sobreRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -184,16 +185,15 @@ export function Header() {
                     </button>
                     {isSobreOpen && (
                       <div className="pl-4 mt-2 space-y-1 border-l-2 border-primary-200" style={{ pointerEvents: 'auto', zIndex: 60 }}>
-                        <a
-                          href="/sobre"
-                          onClick={(e) => {
-                            e.preventDefault()
+                        <button
+                          type="button"
+                          onClick={() => {
                             setIsOpen(false)
                             setIsSobreOpen(false)
-                            window.location.href = '/sobre'
+                            router.push('/sobre')
                           }}
                           className={cn(
-                            'block px-4 py-3 rounded-lg text-sm transition-colors touch-manipulation min-h-[44px] flex items-center relative cursor-pointer',
+                            'w-full text-left block px-4 py-3 rounded-lg text-sm transition-colors touch-manipulation min-h-[44px] flex items-center relative cursor-pointer',
                             pathname === '/sobre'
                               ? 'bg-primary-100 text-primary-600 font-medium'
                               : 'text-gray-600 active:bg-gray-50'
@@ -201,19 +201,18 @@ export function Header() {
                           style={{ pointerEvents: 'auto', WebkitTapHighlightColor: 'rgba(255, 107, 53, 0.2)', zIndex: 70 }}
                         >
                           Sobre Nós
-                        </a>
+                        </button>
                         {institutionalLinks.map((link) => (
-                          <a
+                          <button
                             key={link.href}
-                            href={link.href}
-                            onClick={(e) => {
-                              e.preventDefault()
+                            type="button"
+                            onClick={() => {
                               setIsOpen(false)
                               setIsSobreOpen(false)
-                              window.location.href = link.href
+                              router.push(link.href)
                             }}
                             className={cn(
-                              'block px-4 py-3 rounded-lg text-sm transition-colors touch-manipulation min-h-[44px] flex items-center relative cursor-pointer',
+                              'w-full text-left block px-4 py-3 rounded-lg text-sm transition-colors touch-manipulation min-h-[44px] flex items-center relative cursor-pointer',
                               pathname === link.href
                                 ? 'bg-primary-100 text-primary-600 font-medium'
                                 : 'text-gray-600 active:bg-gray-50'
@@ -221,7 +220,7 @@ export function Header() {
                             style={{ pointerEvents: 'auto', WebkitTapHighlightColor: 'rgba(255, 107, 53, 0.2)', zIndex: 70 }}
                           >
                             {link.name}
-                          </a>
+                          </button>
                         ))}
                       </div>
                     )}
