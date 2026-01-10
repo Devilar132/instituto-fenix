@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Mail, Linkedin, Quote, Sparkles, Award, Users } from 'lucide-react'
+import { Mail, Linkedin, Quote, Sparkles, Award, Users, X } from 'lucide-react'
 import { TeamMember } from '@/types'
 import { Card3D } from '@/components/ui/Card3D'
 import { ScrollReveal } from '@/components/effects/ScrollReveal'
@@ -15,6 +15,18 @@ interface TeamMembersGridProps {
 export function TeamMembersGrid({ members }: TeamMembersGridProps) {
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null)
   const [filter, setFilter] = useState<string>('all')
+
+  // Bloquear scroll do body quando modal estiver aberto
+  useEffect(() => {
+    if (selectedMember) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+    return () => {
+      document.body.style.overflow = 'unset'
+    }
+  }, [selectedMember])
 
   const roles = Array.from(new Set(members.map(m => m.role)))
 
@@ -154,85 +166,106 @@ export function TeamMembersGrid({ members }: TeamMembersGridProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-dark-500/95 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-[100] bg-dark-500/95 backdrop-blur-sm flex items-center justify-center p-0 sm:p-4"
             onClick={() => setSelectedMember(null)}
           >
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="relative max-w-4xl w-full bg-white rounded-2xl overflow-hidden shadow-2xl"
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              transition={{ type: 'spring', duration: 0.3 }}
+              className="relative w-full h-full sm:w-auto sm:h-auto sm:max-w-4xl sm:max-h-[90vh] bg-white sm:rounded-2xl overflow-hidden shadow-2xl flex flex-col"
               onClick={(e) => e.stopPropagation()}
             >
+              {/* Botão Fechar - Topo (sempre visível) */}
               <button
                 onClick={() => setSelectedMember(null)}
-                className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-lg"
+                className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 w-10 h-10 sm:w-12 sm:h-12 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white active:bg-gray-100 transition-colors shadow-lg touch-manipulation"
+                aria-label="Fechar"
               >
-                ×
+                <X className="h-6 w-6 sm:h-7 sm:w-7 text-gray-900" />
               </button>
               
-              <div className="grid md:grid-cols-2">
-                <div className="relative h-64 md:h-full min-h-[400px] bg-gradient-to-br from-primary-500 to-secondary-500">
-                  <Image
-                    src={selectedMember.image || '/placeholder-avatar.jpg'}
-                    alt={selectedMember.name}
-                    fill
-                    className="object-cover"
-                    sizes="50vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-dark-500/80 via-transparent to-transparent" />
-                </div>
-                
-                <div className="p-6 sm:p-8 md:p-12 overflow-y-auto max-h-[600px]">
-                  <div className="mb-6">
-                    <div className="flex items-center mb-2">
-                      <Award className="h-5 w-5 text-primary-600 mr-2" />
-                      <span className="text-sm font-medium text-primary-600">{selectedMember.role}</span>
+              {/* Conteúdo Scrollável */}
+              <div className="flex-1 overflow-y-auto">
+                <div className="flex flex-col md:flex-row h-full">
+                  {/* Imagem - Mobile: menor, Desktop: lateral */}
+                  <div className="relative w-full h-64 sm:h-80 md:h-auto md:w-1/2 md:min-h-[500px] bg-gradient-to-br from-primary-500 to-secondary-500 flex-shrink-0">
+                    <Image
+                      src={selectedMember.image || '/placeholder-avatar.jpg'}
+                      alt={selectedMember.name}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      priority
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-dark-500/80 via-transparent to-transparent md:bg-gradient-to-r md:from-transparent md:via-transparent md:to-dark-500/40" />
+                  </div>
+                  
+                  {/* Conteúdo do Modal */}
+                  <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 lg:p-12">
+                    <div className="mb-4 sm:mb-6">
+                      <div className="flex items-center mb-2 sm:mb-3">
+                        <Award className="h-4 w-4 sm:h-5 sm:w-5 text-primary-600 mr-2 flex-shrink-0" />
+                        <span className="text-xs sm:text-sm font-medium text-primary-600">{selectedMember.role}</span>
+                      </div>
+                      <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4 pr-10 sm:pr-0">
+                        {selectedMember.name}
+                      </h2>
+                      {selectedMember.bio && (
+                        <div className="space-y-3 sm:space-y-4">
+                          <Quote className="h-6 w-6 sm:h-8 sm:w-8 text-primary-300" />
+                          <p className="text-sm sm:text-base md:text-lg text-gray-700 leading-relaxed">
+                            {selectedMember.bio}
+                          </p>
+                        </div>
+                      )}
                     </div>
-                    <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
-                      {selectedMember.name}
-                    </h2>
-                    {selectedMember.bio && (
-                      <div className="space-y-4">
-                        <Quote className="h-8 w-8 text-primary-300" />
-                        <p className="text-base sm:text-lg text-gray-700 leading-relaxed">
-                          {selectedMember.bio}
-                        </p>
+
+                    {selectedMember.social && (
+                      <div className="pt-4 sm:pt-6 border-t border-gray-200">
+                        <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4 flex items-center">
+                          <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-primary-600 mr-2 flex-shrink-0" />
+                          Contato
+                        </h3>
+                        <div className="space-y-2 sm:space-y-3">
+                          {selectedMember.social.email && (
+                            <a
+                              href={`mailto:${selectedMember.social.email}`}
+                              className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-primary-50 active:bg-primary-100 transition-colors group touch-manipulation min-h-[52px]"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <Mail className="h-5 w-5 text-primary-600 group-hover:scale-110 transition-transform flex-shrink-0" />
+                              <span className="text-sm sm:text-base text-gray-700 group-hover:text-primary-600 break-all">{selectedMember.social.email}</span>
+                            </a>
+                          )}
+                          {selectedMember.social.linkedin && (
+                            <a
+                              href={selectedMember.social.linkedin}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-blue-50 active:bg-blue-100 transition-colors group touch-manipulation min-h-[52px]"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <Linkedin className="h-5 w-5 text-blue-600 group-hover:scale-110 transition-transform flex-shrink-0" />
+                              <span className="text-sm sm:text-base text-gray-700 group-hover:text-blue-600">LinkedIn</span>
+                            </a>
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>
-
-                  {selectedMember.social && (
-                    <div className="pt-6 border-t border-gray-200">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                        <Sparkles className="h-5 w-5 text-primary-600 mr-2" />
-                        Contato
-                      </h3>
-                      <div className="space-y-3">
-                        {selectedMember.social.email && (
-                          <a
-                            href={`mailto:${selectedMember.social.email}`}
-                            className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-primary-50 transition-colors group"
-                          >
-                            <Mail className="h-5 w-5 text-primary-600 group-hover:scale-110 transition-transform" />
-                            <span className="text-gray-700 group-hover:text-primary-600">{selectedMember.social.email}</span>
-                          </a>
-                        )}
-                        {selectedMember.social.linkedin && (
-                          <a
-                            href={selectedMember.social.linkedin}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-blue-50 transition-colors group"
-                          >
-                            <Linkedin className="h-5 w-5 text-blue-600 group-hover:scale-110 transition-transform" />
-                            <span className="text-gray-700 group-hover:text-blue-600">LinkedIn</span>
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  )}
                 </div>
+              </div>
+
+              {/* Botão Fechar Móvel - Rodapé (apenas mobile) */}
+              <div className="sm:hidden border-t border-gray-200 p-4 bg-gray-50">
+                <button
+                  onClick={() => setSelectedMember(null)}
+                  className="w-full py-3 px-4 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 active:bg-primary-800 transition-colors touch-manipulation"
+                >
+                  Fechar
+                </button>
               </div>
             </motion.div>
           </motion.div>

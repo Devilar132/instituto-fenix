@@ -11,7 +11,7 @@ import { MagneticButton } from '@/components/ui/MagneticButton'
 
 export function Hero() {
   return (
-    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden gradient-bg">
+    <section className="relative min-h-[85vh] sm:min-h-[90vh] flex items-center justify-center overflow-hidden gradient-bg py-8 sm:py-12">
       {/* Gradient Mesh Background */}
       <GradientMesh />
       
@@ -40,19 +40,22 @@ export function Hero() {
       />
 
       {/* Content */}
-      <div className="container-custom relative z-10 px-4 sm:px-6">
-        <div className="max-w-4xl mx-auto text-center text-white">
+      <div className="container-custom relative z-10 px-4 sm:px-6 py-8 sm:py-12">
+        <div className="max-w-5xl mx-auto text-center text-white">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 sm:mb-6 text-balance px-2">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 sm:mb-5 md:mb-6 leading-tight sm:leading-snug md:leading-normal text-balance px-2 sm:px-4">
               <TextReveal delay={0.2}>
-                Transformando Vidas através da{' '}
+                Recuperando Vidas{' '}
+              </TextReveal>
+              <TextReveal delay={0.3}>
+                Construindo Futuros através da{' '}
               </TextReveal>
               <TextReveal delay={0.4}>
-                <span className="text-gradient-animated drop-shadow-lg">Arte e Cultura</span>
+                <span className="text-gradient-animated drop-shadow-lg">Educação e Empregabilidade</span>
               </TextReveal>
             </h1>
 
@@ -60,10 +63,9 @@ export function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.8 }}
-              className="text-base sm:text-lg md:text-xl lg:text-2xl mb-6 sm:mb-8 text-white/90 max-w-2xl mx-auto drop-shadow-md px-4"
+              className="text-sm sm:text-base md:text-lg lg:text-xl mb-6 sm:mb-7 md:mb-8 text-white/90 max-w-3xl mx-auto drop-shadow-md px-4 sm:px-6 leading-relaxed"
             >
-              O Instituto Fenix promove educação, cultura e assistência social 
-              em Recife, transformando comunidades através de projetos artísticos e educacionais.
+              Atuando no Nordeste, promovemos educação, cultura e assistência social por meio de projetos que geram oportunidades reais, fortalecem comunidades e devolvem dignidade a quem mais precisa. Não mudamos apenas realidades — construímos novos começos.
             </motion.p>
 
             <motion.div

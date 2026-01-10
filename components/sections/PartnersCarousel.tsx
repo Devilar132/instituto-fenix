@@ -14,73 +14,64 @@ interface PartnersCarouselProps {
 
 export function PartnersCarousel({ 
   partners, 
-  title = 'Nossos Parceiros e Patrocinadores',
+  title = 'Nossos Parceiros e Investidores',
   description = 'Empresas e organizações que acreditam na nossa missão'
 }: PartnersCarouselProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
+  const animationRef = useRef<number | null>(null)
+  const isPausedRef = useRef(false)
 
-  // Duplicar os parceiros para loop infinito
+  // Duplicar os parceiros para loop infinito suave
   const duplicatedPartners = [...partners, ...partners, ...partners]
 
-  // Cores por nível
-  const levelColors = {
-    ouro: 'bg-gradient-to-br from-yellow-400 to-yellow-600',
-    prata: 'bg-gradient-to-br from-gray-300 to-gray-500',
-    bronze: 'bg-gradient-to-br from-orange-400 to-orange-600',
-    apoiador: 'bg-gradient-to-br from-primary-400 to-primary-600',
-  }
-
-  const levelLabels = {
-    ouro: 'Ouro',
-    prata: 'Prata',
-    bronze: 'Bronze',
-    apoiador: 'Apoiador',
-  }
-
-  // Auto-scroll suave infinito
+  // Scroll automático infinito simples e estável
   useEffect(() => {
     const scrollContainer = scrollRef.current
     if (!scrollContainer) return
 
-    let animationFrameId: number
     let scrollPosition = 0
-    let isPaused = false
-    const scrollSpeed = 0.5
+    const scrollSpeed = 0.35 // Velocidade confortável
+    const singleSetWidth = scrollContainer.scrollWidth / 3
 
-    const scroll = () => {
-      if (!isPaused) {
+    const autoScroll = () => {
+      if (!isPausedRef.current && scrollContainer) {
         scrollPosition += scrollSpeed
-        const maxScroll = scrollContainer.scrollWidth / 3
-        
-        if (scrollPosition >= maxScroll) {
+
+        // Reset suave quando chega ao fim do primeiro set
+        if (scrollPosition >= singleSetWidth) {
           scrollPosition = 0
+          // Reset instantâneo mas invisível (já que duplicamos os itens)
         }
-        
+
         scrollContainer.scrollLeft = scrollPosition
       }
-      
-      animationFrameId = requestAnimationFrame(scroll)
+
+      animationRef.current = requestAnimationFrame(autoScroll)
     }
 
-    animationFrameId = requestAnimationFrame(scroll)
+    // Iniciar scroll
+    animationRef.current = requestAnimationFrame(autoScroll)
 
+    // Pausar no hover
     const handleMouseEnter = () => {
-      isPaused = true
+      isPausedRef.current = true
     }
     
     const handleMouseLeave = () => {
-      isPaused = false
+      isPausedRef.current = false
     }
 
     scrollContainer.addEventListener('mouseenter', handleMouseEnter)
     scrollContainer.addEventListener('mouseleave', handleMouseLeave)
 
     return () => {
-      cancelAnimationFrame(animationFrameId)
+      if (animationRef.current !== null) {
+        cancelAnimationFrame(animationRef.current)
+      }
       scrollContainer.removeEventListener('mouseenter', handleMouseEnter)
       scrollContainer.removeEventListener('mouseleave', handleMouseLeave)
     }
-  }, [])
+  }, [partners.length])
 
   if (!partners || partners.length === 0) {
     return null
@@ -113,28 +104,32 @@ export function PartnersCarousel({
         {/* Carrossel */}
         <div className="relative py-6 md:py-8">
           {/* Gradient Overlay (esquerda) */}
-          <div className="absolute left-0 top-0 bottom-0 w-24 md:w-32 bg-gradient-to-r from-white via-white/90 to-transparent z-10 pointer-events-none" />
+          <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-24 md:w-32 bg-gradient-to-r from-white via-white/90 to-transparent z-10 pointer-events-none" />
           
           {/* Gradient Overlay (direita) */}
-          <div className="absolute right-0 top-0 bottom-0 w-24 md:w-32 bg-gradient-to-l from-white via-white/90 to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-24 md:w-32 bg-gradient-to-l from-white via-white/90 to-transparent z-10 pointer-events-none" />
 
           {/* Carrossel Container */}
           <div
             ref={scrollRef}
-            className="flex gap-4 sm:gap-6 md:gap-8 lg:gap-10 overflow-x-hidden scroll-smooth hide-scrollbar"
+            className="flex gap-4 sm:gap-6 md:gap-8 lg:gap-10 overflow-x-hidden hide-scrollbar"
+            style={{
+              willChange: 'scroll-position'
+            }}
           >
             {duplicatedPartners.map((partner, index) => (
               <motion.div
                 key={`${partner.id}-${index}`}
-                initial={{ opacity: 0, scale: 0.9 }}
+                data-card
+                initial={{ opacity: 0, scale: 0.95 }}
                 whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, margin: '-50px' }}
                 transition={{ 
-                  duration: 0.4,
-                  delay: (index % partners.length) * 0.05 
+                  duration: 0.3,
+                  delay: Math.min((index % partners.length) * 0.03, 0.3)
                 }}
-                whileHover={{ scale: 1.05, y: -4 }}
-                className="flex-shrink-0"
+                whileHover={{ scale: 1.05 }}
+                className="flex-shrink-0 snap-center"
               >
                 <a
                   href={partner.website}
@@ -142,24 +137,17 @@ export function PartnersCarousel({
                   rel="noopener noreferrer"
                   className="group relative block"
                 >
-                  {/* Card */}
-                  <div className="relative w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 bg-white rounded-full shadow-md border-2 border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-primary-300 hover:shadow-primary-200/20">
-                    {/* Badge de Nível */}
-                    <div className={`absolute -top-1 -right-1 sm:-top-2 sm:-right-2 w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full ${levelColors[partner.level]} shadow-md flex items-center justify-center z-20`}>
-                      <span className="text-white text-[10px] sm:text-xs md:text-sm font-bold">
-                        {partner.level === 'ouro' ? '🥇' : partner.level === 'prata' ? '🥈' : partner.level === 'bronze' ? '🥉' : '⭐'}
-                      </span>
-                    </div>
-
+                  {/* Card - Aumentado para melhor visualização */}
+                  <div className="relative w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44 lg:w-52 lg:h-52 xl:w-56 xl:h-56 bg-white rounded-2xl shadow-lg border-2 border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-2xl hover:border-primary-400 hover:shadow-primary-200/30">
                     {/* Logo Container - Preservando qualidade e boa aparência */}
-                    <div className="relative w-full h-full p-3 sm:p-3.5 md:p-4.5 lg:p-6 flex items-center justify-center">
-                      <div className="relative w-full h-full rounded-full overflow-hidden bg-white">
+                    <div className="relative w-full h-full p-4 sm:p-5 md:p-6 lg:p-7 xl:p-8 flex items-center justify-center">
+                      <div className="relative w-full h-full rounded-xl overflow-hidden bg-white">
                         <Image
                           src={partner.logo}
                           alt={partner.name}
                           fill
-                          className="object-contain p-2.5 sm:p-3 md:p-3.5 lg:p-4.5 transition-all duration-300 group-hover:scale-105"
-                          sizes="(max-width: 640px) 96px, (max-width: 768px) 128px, (max-width: 1024px) 160px, 192px"
+                          className="object-contain p-2 sm:p-3 md:p-4 lg:p-5 transition-all duration-300 group-hover:scale-110"
+                          sizes="(max-width: 640px) 128px, (max-width: 768px) 160px, (max-width: 1024px) 192px, (max-width: 1280px) 224px, 256px"
                           quality={95}
                           priority={index < 6}
                           loading={index < 6 ? 'eager' : 'lazy'}
@@ -168,29 +156,28 @@ export function PartnersCarousel({
                     </div>
 
                     {/* Tooltip Simples */}
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-30">
-                      <div className="bg-gray-900 text-white text-xs sm:text-sm px-3 py-2 rounded-lg whitespace-nowrap shadow-lg">
+                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-30">
+                      <div className="bg-gray-900 text-white text-sm sm:text-base px-4 py-2.5 rounded-lg whitespace-nowrap shadow-xl">
                         <div className="font-bold">{partner.name}</div>
-                        <div className="text-gray-300 text-xs mt-1">
-                          {levelLabels[partner.level]} {partner.since && `• ${partner.since}`}
-                        </div>
+                        {partner.since && (
+                          <div className="text-gray-300 text-xs mt-1">
+                            Parceiro desde {partner.since}
+                          </div>
+                        )}
                         <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900" />
                       </div>
                     </div>
 
                     {/* Icone de link externo */}
-                    <div className="absolute bottom-1 right-1 sm:bottom-2 sm:right-2 w-5 h-5 sm:w-6 sm:h-6 bg-primary-600 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-20">
-                      <ExternalLink className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-white" />
+                    <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 bg-primary-600 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-20 shadow-lg">
+                      <ExternalLink className="h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 text-white" />
                     </div>
                   </div>
 
                   {/* Nome abaixo do logo (mobile) */}
-                  <div className="mt-2 sm:mt-3 text-center sm:hidden">
-                    <div className="text-xs font-semibold text-gray-700 line-clamp-1">
+                  <div className="mt-3 sm:mt-4 text-center sm:hidden">
+                    <div className="text-sm font-semibold text-gray-700 line-clamp-2">
                       {partner.name}
-                    </div>
-                    <div className="text-xs text-gray-500 mt-0.5">
-                      {levelLabels[partner.level]}
                     </div>
                   </div>
                 </a>
