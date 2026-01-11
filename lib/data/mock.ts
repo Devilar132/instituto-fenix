@@ -46,6 +46,43 @@ export const mockProjects: Project[] = [
       partnerships: 3,
     },
   },
+  {
+    id: '4',
+    title: 'Empreendedorismo Transformador',
+    description: 'Empreendedorismo que gera autonomia.',
+    fullDescription: 'O Projeto Empreendedorismo Transformador capacita mulheres em técnicas de costura, fortalecendo talentos e criando caminhos reais para o próprio negócio e a independência financeira.',
+    image: '/projects/empreendedorismo-transformador/CAPA.jpg',
+    category: 'educacao',
+    status: 'ativo',
+    startDate: '2023-06-01',
+    impact: {
+      peopleReached: 150,
+      events: 8,
+      partnerships: 4,
+    },
+    gallery: [
+      '/projects/empreendedorismo-transformador/CAPA.jpg',
+      '/projects/empreendedorismo-transformador/04.jpg',
+      '/projects/empreendedorismo-transformador/10.jpg',
+      '/projects/empreendedorismo-transformador/18.jpg',
+      '/projects/empreendedorismo-transformador/20240911_103320.jpg',
+      '/projects/empreendedorismo-transformador/20240911_103534.jpg',
+      '/projects/empreendedorismo-transformador/20240911_103545.jpg',
+      '/projects/empreendedorismo-transformador/20240911_103547.jpg',
+      '/projects/empreendedorismo-transformador/20240911_175632.jpg',
+      '/projects/empreendedorismo-transformador/20240919_075138.jpg',
+      '/projects/empreendedorismo-transformador/20240919_075231.jpg',
+      '/projects/empreendedorismo-transformador/20240919_080822.jpg',
+      '/projects/empreendedorismo-transformador/20240919_080826.jpg',
+      '/projects/empreendedorismo-transformador/20240919_082054.jpg',
+      '/projects/empreendedorismo-transformador/20241030_131543.jpg',
+      '/projects/empreendedorismo-transformador/IMG_20241220_111025262_HDR.jpg',
+      '/projects/empreendedorismo-transformador/IMG_20241220_111026920_HDR.jpg',
+      '/projects/empreendedorismo-transformador/IMG_20241220_111101135_HDR.jpg',
+      '/projects/empreendedorismo-transformador/IMG_20241220_111729928_HDR.jpg',
+      '/projects/empreendedorismo-transformador/IMG_20241220_111849301_HDR.jpg',
+    ],
+  },
 ]
 
 export const mockEvents: Event[] = [
@@ -261,7 +298,7 @@ export const mockGallery: GalleryItem[] = [
   {
     id: '7',
     title: 'Prêmio Innovare 2024',
-    description: 'Reconhecimento do trabalho do Instituto Fenix',
+    description: 'Quando tecnologia e propósito se encontram. Homenagem ao Instituto Fênix no Prêmio Innovare 2024 pelo Fênix Connect, aplicativo que conecta pessoas, oportunidades e novos começos.',
     image: '/gallery/eventos/premio-innovare-2024/premio-innovare-2024.jpg',
     images: [
       '/gallery/eventos/premio-innovare-2024/premio-innovare-2024.jpg',
