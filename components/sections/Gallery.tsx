@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, ChevronLeft, ChevronRight, Play, Download } from 'lucide-react'
+import { X, ChevronLeft, ChevronRight, Play, Download, Loader2 } from 'lucide-react'
 import { GalleryItem } from '@/types'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
@@ -15,8 +15,10 @@ interface GalleryProps {
 }
 
 export function Gallery({ items, title, description }: GalleryProps) {
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
+  const [selectedItemIndex, setSelectedItemIndex] = useState<number | null>(null)
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0)
   const [filter, setFilter] = useState<string>('all')
+  const [imageLoading, setImageLoading] = useState<boolean>(true)
 
   const categories = Array.from(
     new Set(items.map((item) => item.category).filter((cat): cat is string => Boolean(cat)))
@@ -27,30 +29,82 @@ export function Gallery({ items, title, description }: GalleryProps) {
       ? items
       : items.filter((item) => item.category === filter)
 
-  const selectedItem = selectedIndex !== null ? filteredItems[selectedIndex] : null
+  const selectedItem = selectedItemIndex !== null ? filteredItems[selectedItemIndex] : null
+  
+  // Obter todas as imagens do item atual (suporta array ou imagem única)
+  const getItemImages = (item: GalleryItem): string[] => {
+    if (item.images && item.images.length > 0) {
+      return item.images
+    }
+    return [item.image]
+  }
+  
+  const currentImages = selectedItem ? getItemImages(selectedItem) : []
+  const currentImage = currentImages[selectedImageIndex] || selectedItem?.image || ''
+
+  // Preload das imagens próximas (anterior e próxima)
+  useEffect(() => {
+    if (!selectedItem || currentImages.length <= 1) return
+
+    const preloadImages = () => {
+      const prevIndex = selectedImageIndex > 0 ? selectedImageIndex - 1 : currentImages.length - 1
+      const nextIndex = selectedImageIndex < currentImages.length - 1 ? selectedImageIndex + 1 : 0
+
+      // Preload da imagem anterior
+      if (currentImages[prevIndex]) {
+        const img = new window.Image()
+        img.src = currentImages[prevIndex]
+      }
+
+      // Preload da próxima imagem
+      if (currentImages[nextIndex]) {
+        const img = new window.Image()
+        img.src = currentImages[nextIndex]
+      }
+    }
+
+    preloadImages()
+  }, [selectedItem, selectedImageIndex, currentImages])
 
   const openLightbox = (index: number) => {
-    setSelectedIndex(index)
+    setSelectedItemIndex(index)
+    setSelectedImageIndex(0) // Sempre começar na primeira imagem do álbum
+    setImageLoading(true)
     document.body.style.overflow = 'hidden'
   }
 
   const closeLightbox = () => {
-    setSelectedIndex(null)
+    setSelectedItemIndex(null)
+    setSelectedImageIndex(0)
     document.body.style.overflow = 'unset'
   }
 
   const navigateImage = (direction: 'prev' | 'next') => {
-    if (selectedIndex === null) return
+    if (selectedItemIndex === null || !selectedItem) return
+
+    const images = getItemImages(selectedItem)
+    
+    if (images.length <= 1) return // Se só tem uma imagem, não navega
+
+    setImageLoading(true) // Mostrar loading ao mudar de imagem
 
     if (direction === 'prev') {
-      setSelectedIndex(
-        selectedIndex > 0 ? selectedIndex - 1 : filteredItems.length - 1
+      setSelectedImageIndex(
+        selectedImageIndex > 0 ? selectedImageIndex - 1 : images.length - 1
       )
     } else {
-      setSelectedIndex(
-        selectedIndex < filteredItems.length - 1 ? selectedIndex + 1 : 0
+      setSelectedImageIndex(
+        selectedImageIndex < images.length - 1 ? selectedImageIndex + 1 : 0
       )
     }
+  }
+
+  const handleImageLoad = () => {
+    setImageLoading(false)
+  }
+
+  const handleImageError = () => {
+    setImageLoading(false)
   }
 
   return (
@@ -151,7 +205,7 @@ export function Gallery({ items, title, description }: GalleryProps) {
 
       {/* Lightbox */}
       <AnimatePresence>
-        {selectedItem && selectedIndex !== null && (
+        {selectedItem && selectedItemIndex !== null && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -174,18 +228,24 @@ export function Gallery({ items, title, description }: GalleryProps) {
                 <X className="h-5 w-5 text-gray-900" />
               </button>
 
-              {/* Navigation Buttons */}
-              {filteredItems.length > 1 && (
+              {/* Navigation Buttons - Navega entre imagens do mesmo item */}
+              {currentImages.length > 1 && (
                 <>
                   <button
-                    onClick={() => navigateImage('prev')}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-lg"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      navigateImage('prev')
+                    }}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-lg touch-manipulation"
                   >
                     <ChevronLeft className="h-6 w-6 text-gray-900" />
                   </button>
                   <button
-                    onClick={() => navigateImage('next')}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-lg"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      navigateImage('next')
+                    }}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-lg touch-manipulation"
                   >
                     <ChevronRight className="h-6 w-6 text-gray-900" />
                   </button>
@@ -203,14 +263,30 @@ export function Gallery({ items, title, description }: GalleryProps) {
                       allowFullScreen
                     />
                   ) : (
-                    <Image
-                      src={selectedItem.image}
-                      alt={selectedItem.title}
-                      width={1200}
-                      height={800}
-                      className="object-contain w-full h-full"
-                      sizes="100vw"
-                    />
+                    <>
+                      {/* Loading Indicator */}
+                      {imageLoading && (
+                        <div className="absolute inset-0 flex items-center justify-center z-10">
+                          <div className="bg-white/90 backdrop-blur-sm rounded-full p-4 shadow-lg">
+                            <Loader2 className="h-8 w-8 text-primary-600 animate-spin" />
+                          </div>
+                        </div>
+                      )}
+                      <Image
+                        src={currentImage}
+                        alt={selectedItem.title}
+                        width={1200}
+                        height={800}
+                        className={`object-contain w-full h-full transition-opacity duration-300 ${
+                          imageLoading ? 'opacity-0' : 'opacity-100'
+                        }`}
+                        sizes="100vw"
+                        priority
+                        onLoad={handleImageLoad}
+                        onError={handleImageError}
+                        quality={90}
+                      />
+                    </>
                   )}
                 </div>
 
@@ -244,7 +320,7 @@ export function Gallery({ items, title, description }: GalleryProps) {
 
                     <div className="flex gap-2 pt-4 border-t">
                       <a
-                        href={selectedItem.image}
+                        href={currentImage}
                         download
                         className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors flex items-center justify-center gap-2"
                       >
@@ -256,10 +332,10 @@ export function Gallery({ items, title, description }: GalleryProps) {
                 </div>
               </div>
 
-              {/* Counter */}
-              {filteredItems.length > 1 && (
+              {/* Counter - Mostra índice da imagem no álbum */}
+              {currentImages.length > 1 && (
                 <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full text-sm font-medium text-gray-900 shadow-lg">
-                  {selectedIndex + 1} / {filteredItems.length}
+                  {selectedImageIndex + 1} / {currentImages.length}
                 </div>
               )}
             </motion.div>

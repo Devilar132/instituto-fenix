@@ -98,7 +98,8 @@ export interface GalleryItem {
   id: string
   title: string
   description?: string
-  image: string
+  image: string // Mantido para compatibilidade
+  images?: string[] // Array de imagens para álbum (se fornecido, usa este em vez de image)
   thumbnail?: string
   type: 'image' | 'video'
   videoUrl?: string
