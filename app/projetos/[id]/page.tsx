@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -27,34 +27,40 @@ const statusLabels = {
   'planejado': 'Planejado',
 }
 
+// Obter todas as imagens do projeto (gallery ou image)
+const getProjectImages = (proj: Project | undefined): string[] => {
+  if (!proj) return []
+  if (proj.gallery && proj.gallery.length > 0) {
+    return proj.gallery
+  }
+  return [proj.image]
+}
+
 export default function ProjetoDetailPage({ params }: PageProps) {
   const project = mockProjects.find((p) => p.id === params.id)
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null)
   const [imageLoading, setImageLoading] = useState<boolean>(true)
 
-  if (!project) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Projeto não encontrado</h1>
-          <Link href="/projetos" className="text-primary-600 hover:text-primary-700 font-medium">
-            Voltar para Projetos
-          </Link>
-        </div>
-      </div>
-    )
-  }
+  const projectImages = useMemo(() => getProjectImages(project), [project])
+  const currentImage = selectedImageIndex !== null && projectImages.length > 0 ? projectImages[selectedImageIndex] : (project?.image || '')
 
-  // Obter todas as imagens do projeto (gallery ou image)
-  const getProjectImages = (proj: Project): string[] => {
-    if (proj.gallery && proj.gallery.length > 0) {
-      return proj.gallery
+  const closeLightbox = useCallback(() => {
+    setSelectedImageIndex(null)
+    document.body.style.overflow = 'unset'
+  }, [])
+
+  const navigateImage = useCallback((direction: 'prev' | 'next') => {
+    if (selectedImageIndex === null) return
+    if (projectImages.length <= 1) return
+
+    setImageLoading(true)
+
+    if (direction === 'prev') {
+      setSelectedImageIndex(selectedImageIndex > 0 ? selectedImageIndex - 1 : projectImages.length - 1)
+    } else {
+      setSelectedImageIndex(selectedImageIndex < projectImages.length - 1 ? selectedImageIndex + 1 : 0)
     }
-    return [proj.image]
-  }
-
-  const projectImages = getProjectImages(project)
-  const currentImage = selectedImageIndex !== null ? projectImages[selectedImageIndex] : project.image
+  }, [selectedImageIndex, projectImages.length])
 
   // Preload das imagens próximas
   useEffect(() => {
@@ -78,38 +84,6 @@ export default function ProjetoDetailPage({ params }: PageProps) {
     preloadImages()
   }, [selectedImageIndex, projectImages])
 
-  const openLightbox = (index: number) => {
-    setSelectedImageIndex(index)
-    setImageLoading(true)
-    document.body.style.overflow = 'hidden'
-  }
-
-  const closeLightbox = () => {
-    setSelectedImageIndex(null)
-    document.body.style.overflow = 'unset'
-  }
-
-  const navigateImage = (direction: 'prev' | 'next') => {
-    if (selectedImageIndex === null) return
-    if (projectImages.length <= 1) return
-
-    setImageLoading(true)
-
-    if (direction === 'prev') {
-      setSelectedImageIndex(selectedImageIndex > 0 ? selectedImageIndex - 1 : projectImages.length - 1)
-    } else {
-      setSelectedImageIndex(selectedImageIndex < projectImages.length - 1 ? selectedImageIndex + 1 : 0)
-    }
-  }
-
-  const handleImageLoad = () => {
-    setImageLoading(false)
-  }
-
-  const handleImageError = () => {
-    setImageLoading(false)
-  }
-
   // Teclado navigation
   useEffect(() => {
     if (selectedImageIndex === null) return
@@ -126,7 +100,34 @@ export default function ProjetoDetailPage({ params }: PageProps) {
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [selectedImageIndex])
+  }, [selectedImageIndex, closeLightbox, navigateImage])
+
+  if (!project) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Projeto não encontrado</h1>
+          <Link href="/projetos" className="text-primary-600 hover:text-primary-700 font-medium">
+            Voltar para Projetos
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  const openLightbox = (index: number) => {
+    setSelectedImageIndex(index)
+    setImageLoading(true)
+    document.body.style.overflow = 'hidden'
+  }
+
+  const handleImageLoad = () => {
+    setImageLoading(false)
+  }
+
+  const handleImageError = () => {
+    setImageLoading(false)
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
