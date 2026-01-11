@@ -133,6 +133,30 @@ export const mockProjects: Project[] = [
       '/projects/circuito-boxe-lutando-pela-liberdade/WhatsApp Image 2023-08-24 at 21.32.37.jpeg',
     ],
   },
+  {
+    id: '7',
+    title: 'Acompanhamento de Empresas',
+    description: 'O Instituto Fênix realiza o acompanhamento de pessoas inseridas no mercado de trabalho por meio de empresas parceiras, oferecendo apoio, orientação e monitoramento para garantir inclusão, dignidade e estabilidade profissional.',
+    fullDescription: 'O Instituto Fênix realiza o acompanhamento de pessoas inseridas no mercado de trabalho por meio de empresas parceiras, oferecendo apoio, orientação e monitoramento para garantir inclusão, dignidade e estabilidade profissional.',
+    image: '/projects/acompanhamento-de-empresas/CAPA.jpg',
+    category: 'educacao',
+    status: 'ativo',
+    startDate: '2022-01-01',
+    impact: {
+      peopleReached: 300,
+      events: 24,
+      partnerships: 12,
+    },
+    gallery: [
+      '/projects/acompanhamento-de-empresas/CAPA.jpg',
+      '/projects/acompanhamento-de-empresas/06.jpg',
+      '/projects/acompanhamento-de-empresas/09.jpg',
+      '/projects/acompanhamento-de-empresas/10.jpg',
+      '/projects/acompanhamento-de-empresas/11.jpg',
+      '/projects/acompanhamento-de-empresas/16.jpg',
+      '/projects/acompanhamento-de-empresas/17.jpg',
+    ],
+  },
 ]
 
 export const mockEvents: Event[] = [
