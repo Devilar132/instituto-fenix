@@ -74,12 +74,14 @@ export function DonationForm() {
     
     const value = parseFloat(inputValue)
     
-    // Se não é um número válido, não faz nada
-    if (isNaN(value)) {
+    // Se não é um número válido, limpa o valor
+    if (isNaN(value) || !isFinite(value)) {
+      setSelectedAmount(null)
+      setValue('amount', undefined as any, { shouldValidate: false })
       return
     }
     
-    // Atualiza o valor no form
+    // Atualiza o valor no form apenas se for um número válido
     setValue('amount', value, { shouldValidate: false })
     
     // Se o valor digitado corresponde a um preset, marca o botão
@@ -155,7 +157,7 @@ export function DonationForm() {
               })}
               error={!!touchedFields.amount && errors.amount ? errors.amount.message : undefined}
             />
-            {amount && !isNaN(amount) && amount >= 10 && (
+            {amount != null && typeof amount === 'number' && !isNaN(amount) && isFinite(amount) && amount >= 10 ? (
               <motion.p 
                 initial={{ opacity: 0, y: -5 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -163,7 +165,7 @@ export function DonationForm() {
               >
                 Valor selecionado: <span className="font-bold text-primary-600">{formatCurrency(amount)}</span>
               </motion.p>
-            )}
+            ) : null}
           </div>
 
           {/* Dados Pessoais */}
