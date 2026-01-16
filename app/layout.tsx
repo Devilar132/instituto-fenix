@@ -39,6 +39,11 @@ export const metadata: Metadata = {
   creator: 'Instituto Fenix',
   publisher: 'Instituto Fenix',
   metadataBase: new URL('https://fenixpe.org'),
+  icons: {
+    icon: '/logo-fenix.png',
+    shortcut: '/logo-fenix.png',
+    apple: '/logo-fenix.png',
+  },
   openGraph: {
     type: 'website',
     locale: 'pt_BR',
@@ -86,7 +91,6 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={`${inter.variable} ${poppins.variable}`}>
       <head>
-        <link rel="icon" href="/favicon.ico" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
